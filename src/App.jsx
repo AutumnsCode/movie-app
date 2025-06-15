@@ -1,4 +1,4 @@
-import React, { useState } from 'react'
+import React, { useState, useEf } from 'react'
 import Search from './components/Search'
 
 const App = () => {
@@ -11,7 +11,6 @@ const App = () => {
           <img src="/hero.png" alt="Hero banner" />
           <h1>Find <span className='text-gradient'>Movies</span> You'll Enjoy Without the Hassle</h1>
           <Search searchTerm={searchTerm} setSearchTerm={setSearchTerm} />
-          <p>test</p>
         </header>
       </div>
     </main>
