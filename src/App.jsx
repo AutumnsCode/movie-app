@@ -29,7 +29,11 @@ const App = () => {
   const [movieList, setMovieList] = useState([])
   const [isLoading, setIsLoading] = useState(false)
   const [debounceSearchTerm, setDebounceSearchTerm] = useState('')
+
+
   const [trendingMovies, setTrendingMovies] = useState([])
+  const [isTrendingMovieLoading, setIsTrendingMovieLoading] = useState(false)
+  const [trendingMovieError, setTrendingMovieError] = useState(null)
 
   // Verzögert die Suche um 1 Sekunde nach der letzten Eingabe
   useDebounce(() => setDebounceSearchTerm(searchTerm), 1000, [searchTerm])
@@ -73,11 +77,16 @@ const App = () => {
 
   // Holt die beliebtesten Filme aus Appwrite (z. B. durch Suchzählungen)
   const loadTrendingMovies = async () => {
+    setIsTrendingMovieLoading(true)
+    setTrendingMovieError('')
     try {
       const movies = await getTrendingMovies()
       setTrendingMovies(movies)
     } catch (error) {
       console.error(`Error fetching trending movies: ${error}`)
+      setTrendingMovieError("Please try again later.")
+    } finally {
+      setIsTrendingMovieLoading(false)
     }
   }
 
@@ -106,12 +115,18 @@ const App = () => {
           <section className="trending">
             <h2>Trending Movies</h2>
             <ul>
-              {trendingMovies.map((movie, index) => (
-                <li key={movie.$id}>
-                  <p>{index + 1}</p>
-                  <img src={movie.poster_url} alt={movie.titel} />
-                </li>
-              ))}
+              {isTrendingMovieLoading ? (
+                <Spinner />
+              ) : errorMessage ? (
+                  <p className="text-red-500">{error}</p>
+                ) : (
+                  trendingMovies.map((movie, index) => (
+                    <li key={movie.$id}>
+                      <p>{index + 1}</p>
+                      <img src={movie.poster_url} alt={movie.titel} />
+                    </li>
+                  ))
+              )}
             </ul>
           </section>
         )}
